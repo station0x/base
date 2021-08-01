@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -9,11 +11,11 @@ import "./SafeMathUint.sol";
 import "./SafeMathInt.sol";
 
 /// @title Dividend-Paying Token
-/// @author Roger Wu (https://github.com/roger-wu)
+/// @author Roger Wu (https://github.com/roger-wu) & Captain Isaac A.
 /// @dev A mintable ERC20 token that allows anyone to pay and distribute a target token
 ///  to token holders as dividends and allows token holders to withdraw their dividends.
 ///  Reference: the source code of PoWH3D: https://etherscan.io/address/0xB3775fB83F7D12A36E0475aBdD1FCA35c091efBe#code
-contract Station is ERC721Enumerable {
+contract Station is ERC721Enumerable, ERC721URIStorage {
   using SafeMath for uint256;
   using SafeMathUint for uint256;
   using SafeMathInt for int256;
@@ -129,8 +131,8 @@ contract Station is ERC721Enumerable {
       address from,
       address to,
       uint256 tokenId
-  ) internal virtual override {
-      super._beforeTokenTransfer(from, to, tokenId);
+  ) internal virtual override(ERC721, ERC721Enumerable) {
+      ERC721Enumerable._beforeTokenTransfer(from, to, tokenId);
       if(from == address(0)) {
         require(totalSupply() < maxSupply, "Exceeded max rocket supply");
         magnifiedDividendCorrections[to] = magnifiedDividendCorrections[to].sub( magnifiedDividendPerShare.toInt256Safe() );
@@ -141,15 +143,34 @@ contract Station is ERC721Enumerable {
       }
   }
 
-  function mint(address to, uint256 tokenId, bytes memory _data) public {
+  function mint(address to, uint256 tokenId, string memory _tokenURI, bytes memory _data) public {
     require(msg.sender == manufacturer, "Do not call this function!");
     _safeMint(to, tokenId, _data);
+    _setTokenURI(tokenId, _tokenURI);
+  }
+
+  function setTokenURI(uint256 tokenId, string memory _tokenURI) public {
+    require(msg.sender == manufacturer, "Do not call this function!");
+    _setTokenURI(tokenId, _tokenURI);
+  }
+
+  function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {}
+  
+  function tokenURI(uint256 tokenId) public view virtual override(ERC721, ERC721URIStorage) returns (string memory) {
+    return ERC721URIStorage.tokenURI(tokenId);
+  }
+
+  function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Enumerable, ERC721) returns (bool) {
+    return ERC721Enumerable.supportsInterface(interfaceId);
   }
 
   function changeManufacturer(address _manufacturer) public {
     require(msg.sender == manufacturer, "Do not call this function!");
     manufacturer = _manufacturer;
+    emit ChangeManufacturer(_manufacturer);
   }
+
+  event ChangeManufacturer(address _manufacturer);
 
   /// @dev This event MUST emit when target is distributed to token holders.
   /// @param from The address which sends target to this contract.

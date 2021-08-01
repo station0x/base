@@ -35,6 +35,12 @@ contract Kerosene {
     DOMAIN_SEPARATOR = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes(name)), getChainId(), address(this)));
   }
 
+  function changeMinter(address _newMinter) public {
+    require(msg.sender == minter, "Do not call this function!");
+    minter = _newMinter;
+    emit ChangeMinter(_newMinter);
+  }
+
   function balanceOf(address account) public view returns (uint96) {
     return balances[account];
   }
@@ -67,24 +73,24 @@ contract Kerosene {
     totalSupply -= _value;
   }
 
-    function permit(address owner, address spender, uint rawAmount, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
-      uint96 amount;
-      if (rawAmount == type(uint256).max) {
-          amount = type(uint96).max;
-      } else {
-          amount = safe96(rawAmount, "Uni::permit: amount exceeds 96 bits");
-      }
+  function permit(address owner, address spender, uint rawAmount, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
+    uint96 amount;
+    if (rawAmount == type(uint256).max) {
+        amount = type(uint96).max;
+    } else {
+        amount = safe96(rawAmount, "Uni::permit: amount exceeds 96 bits");
+    }
 
-      bytes32 structHash = keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, rawAmount, nonces[owner]++, deadline));
-      bytes32 digest = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, structHash));
-      address signatory = ecrecover(digest, v, r, s);
-      require(signatory != address(0), "Uni::permit: invalid signature");
-      require(signatory == owner, "Uni::permit: unauthorized");
-      require(block.timestamp <= deadline, "Uni::permit: signature expired");
+    bytes32 structHash = keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, rawAmount, nonces[owner]++, deadline));
+    bytes32 digest = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, structHash));
+    address signatory = ecrecover(digest, v, r, s);
+    require(signatory != address(0), "Uni::permit: invalid signature");
+    require(signatory == owner, "Uni::permit: unauthorized");
+    require(block.timestamp <= deadline, "Uni::permit: signature expired");
 
-      allowance[owner][spender] = amount;
+    allowance[owner][spender] = amount;
 
-      emit Approval(owner, spender, amount);
+    emit Approval(owner, spender, amount);
   }
 
    function getCurrentVotes(address account) external view returns (uint96) {
@@ -92,63 +98,63 @@ contract Kerosene {
         return nCheckpoints > 0 ? checkpoints[account][nCheckpoints - 1].votes : 0;
     }
 
-    function getPriorVotes(address account, uint blockNumber) public view returns (uint96) {
-        require(blockNumber < block.number, "Uni::getPriorVotes: not yet determined");
+  function getPriorVotes(address account, uint blockNumber) public view returns (uint96) {
+      require(blockNumber < block.number, "Uni::getPriorVotes: not yet determined");
 
-        uint32 nCheckpoints = numCheckpoints[account];
-        if (nCheckpoints == 0) {
-            return 0;
-        }
+      uint32 nCheckpoints = numCheckpoints[account];
+      if (nCheckpoints == 0) {
+          return 0;
+      }
 
-        // First check most recent balance
-        if (checkpoints[account][nCheckpoints - 1].fromBlock <= blockNumber) {
-            return checkpoints[account][nCheckpoints - 1].votes;
-        }
+      // First check most recent balance
+      if (checkpoints[account][nCheckpoints - 1].fromBlock <= blockNumber) {
+          return checkpoints[account][nCheckpoints - 1].votes;
+      }
 
-        // Next check implicit zero balance
-        if (checkpoints[account][0].fromBlock > blockNumber) {
-            return 0;
-        }
+      // Next check implicit zero balance
+      if (checkpoints[account][0].fromBlock > blockNumber) {
+          return 0;
+      }
 
-        uint32 lower = 0;
-        uint32 upper = nCheckpoints - 1;
-        while (upper > lower) {
-            uint32 center = upper - (upper - lower) / 2; // ceil, avoiding overflow
-            Checkpoint memory cp = checkpoints[account][center];
-            if (cp.fromBlock == blockNumber) {
-                return cp.votes;
-            } else if (cp.fromBlock < blockNumber) {
-                lower = center;
-            } else {
-                upper = center - 1;
-            }
-        }
-        return checkpoints[account][lower].votes;
-    }
+      uint32 lower = 0;
+      uint32 upper = nCheckpoints - 1;
+      while (upper > lower) {
+          uint32 center = upper - (upper - lower) / 2; // ceil, avoiding overflow
+          Checkpoint memory cp = checkpoints[account][center];
+          if (cp.fromBlock == blockNumber) {
+              return cp.votes;
+          } else if (cp.fromBlock < blockNumber) {
+              lower = center;
+          } else {
+              upper = center - 1;
+          }
+      }
+      return checkpoints[account][lower].votes;
+  }
 
   function delegate(address delegatee) public {
-      return _delegate(msg.sender, delegatee);
+    return _delegate(msg.sender, delegatee);
   }
 
   function _delegate(address delegator, address delegatee) internal {
-        address currentDelegate = delegates[delegator];
-        uint96 delegatorBalance = balances[delegator];
-        delegates[delegator] = delegatee;
+    address currentDelegate = delegates[delegator];
+    uint96 delegatorBalance = balances[delegator];
+    delegates[delegator] = delegatee;
 
-        emit DelegateChanged(delegator, currentDelegate, delegatee);
+    emit DelegateChanged(delegator, currentDelegate, delegatee);
 
-        _moveDelegates(currentDelegate, delegatee, delegatorBalance);
+    _moveDelegates(currentDelegate, delegatee, delegatorBalance);
   }
 
-     function delegateBySig(address delegatee, uint nonce, uint expiry, uint8 v, bytes32 r, bytes32 s) public {
-        bytes32 structHash = keccak256(abi.encode(DELEGATION_TYPEHASH, delegatee, nonce, expiry));
-        bytes32 digest = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, structHash));
-        address signatory = ecrecover(digest, v, r, s);
-        require(signatory != address(0), "Uni::delegateBySig: invalid signature");
-        require(nonce == nonces[signatory]++, "Uni::delegateBySig: invalid nonce");
-        require(block.timestamp <= expiry, "Uni::delegateBySig: signature expired");
-        return _delegate(signatory, delegatee);
-    }
+  function delegateBySig(address delegatee, uint nonce, uint expiry, uint8 v, bytes32 r, bytes32 s) public {
+    bytes32 structHash = keccak256(abi.encode(DELEGATION_TYPEHASH, delegatee, nonce, expiry));
+    bytes32 digest = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, structHash));
+    address signatory = ecrecover(digest, v, r, s);
+    require(signatory != address(0), "Uni::delegateBySig: invalid signature");
+    require(nonce == nonces[signatory]++, "Uni::delegateBySig: invalid nonce");
+    require(block.timestamp <= expiry, "Uni::delegateBySig: signature expired");
+    return _delegate(signatory, delegatee);
+  }
 
   function _transferTokens(address src, address dst, uint96 amount) internal {
     require(src != address(0), "Uni::_transferTokens: cannot transfer from the zero address");
@@ -219,9 +225,9 @@ contract Kerosene {
     return chainId;
   }
   
+  event ChangeMinter(address _newMinter);
   event Transfer(address indexed _from, address indexed _to, uint96 _value);
   event Approval(address indexed _owner, address indexed _spender, uint96 _value);
   event DelegateChanged(address indexed delegator, address indexed fromDelegate, address indexed toDelegate);
   event DelegateVotesChanged(address indexed delegate, uint previousBalance, uint newBalance);
-
 }
