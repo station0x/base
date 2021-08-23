@@ -10,6 +10,16 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./SafeMathUint.sol";
 import "./SafeMathInt.sol";
 
+interface IRegistry {
+  function getAddressOf(string calldata) external view returns (address);
+}
+
+interface IStationHooks { 
+  function onTransfer(address msgSender, address from, address to, uint256 tokenId) external returns (bool);
+  function onSeize(address msgSender, address from, address to, uint256 tokenId) external returns (bool);
+  function onDistribute(address msgSender, uint amount) external returns (bool);
+}
+
 /// @title Dividend-Paying Token
 /// @author Roger Wu (https://github.com/roger-wu) & Captain Isaac A.
 /// @dev A mintable ERC20 token that allows anyone to pay and distribute a target token
@@ -21,9 +31,7 @@ contract Station is ERC721Enumerable, ERC721URIStorage {
   using SafeMathInt for int256;
   using SafeERC20 for IERC20;
   
-  address public manufacturer;
-  uint256 public maxSupply;
-  IERC20 public kerosene;
+  IRegistry public registry;
 
   // With `magnitude`, we can properly distribute dividends even if the amount of received target is small.
   // For more discussion about choosing the value of `magnitude`,
@@ -49,13 +57,9 @@ contract Station is ERC721Enumerable, ERC721URIStorage {
   constructor(
     string memory _name,
     string memory _symbol,
-    address _manufacturer, 
-    uint256 _maxSupply, 
-    address _kerosene
+    IRegistry _registry
   ) ERC721(_name, _symbol) {
-    kerosene = IERC20(_kerosene);
-    manufacturer = _manufacturer;
-    maxSupply = _maxSupply;
+    registry = _registry;
   }
 
   /// @notice Distributes target to token holders as dividends.
@@ -74,12 +78,15 @@ contract Station is ERC721Enumerable, ERC721URIStorage {
   function distributeDividends(uint amount) public {
     require(totalSupply() > 0);
     require(amount > 0);
-
+    IERC20 rewardToken = IERC20(registry.getAddressOf('rewardToken'));
+    IStationHooks hooks = IStationHooks(registry.getAddressOf('stationHooks'));
+    require(address(rewardToken) != address(0));
+    require(hooks.onDistribute(msg.sender, amount));
     magnifiedDividendPerShare = magnifiedDividendPerShare.add(
       (amount).mul(magnitude) / totalSupply()
     );
 
-    kerosene.safeTransferFrom(msg.sender, address(this), amount);
+    rewardToken.safeTransferFrom(msg.sender, address(this), amount);
 
     emit DividendsDistributed(msg.sender, amount);
   }
@@ -87,11 +94,13 @@ contract Station is ERC721Enumerable, ERC721URIStorage {
   /// @notice Withdraws the target distributed to the sender.
   /// @dev It emits a `DividendWithdrawn` event if the amount of withdrawn target is greater than 0.
   function withdrawDividend() public {
+    IERC20 rewardToken = IERC20(registry.getAddressOf('rewardToken'));
+    require(address(rewardToken) != address(0));
     uint256 _withdrawableDividend = withdrawableDividendOf(msg.sender);
     if (_withdrawableDividend > 0) {
       withdrawnDividends[msg.sender] = withdrawnDividends[msg.sender].add(_withdrawableDividend);
       emit DividendWithdrawn(msg.sender, _withdrawableDividend);
-      kerosene.safeTransfer(msg.sender, _withdrawableDividend);
+      rewardToken.safeTransfer(msg.sender, _withdrawableDividend);
     }
   }
 
@@ -132,9 +141,10 @@ contract Station is ERC721Enumerable, ERC721URIStorage {
       address to,
       uint256 tokenId
   ) internal virtual override(ERC721, ERC721Enumerable) {
+      IStationHooks hooks = IStationHooks(registry.getAddressOf('stationHooks'));
+      require(hooks.onTransfer(msg.sender, from, to, tokenId));
       ERC721Enumerable._beforeTokenTransfer(from, to, tokenId);
       if(from == address(0)) {
-        require(totalSupply() < maxSupply, "Exceeded max rocket supply");
         magnifiedDividendCorrections[to] = magnifiedDividendCorrections[to].sub( magnifiedDividendPerShare.toInt256Safe() );
       } else {
         int256 _magCorrection = magnifiedDividendPerShare.toInt256Safe();
@@ -144,17 +154,24 @@ contract Station is ERC721Enumerable, ERC721URIStorage {
   }
 
   function mint(address to, uint256 tokenId, string memory _tokenURI, bytes memory _data) public {
+    address manufacturer = registry.getAddressOf('manufacturerV1');
     require(msg.sender == manufacturer, "Do not call this function!");
     _safeMint(to, tokenId, _data);
     _setTokenURI(tokenId, _tokenURI);
   }
 
+  function seize(address from, address to, uint256 tokenId) public {
+    IStationHooks hooks = IStationHooks(registry.getAddressOf('stationHooks'));
+    require(hooks.onSeize(msg.sender, from, to, tokenId));
+    _transfer(from, to, tokenId);
+  }
+
   function setTokenURI(uint256 tokenId, string memory _tokenURI) public {
+    address manufacturer = registry.getAddressOf('manufacturerV1');
     require(msg.sender == manufacturer, "Do not call this function!");
     _setTokenURI(tokenId, _tokenURI);
   }
 
-  function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {}
   
   function tokenURI(uint256 tokenId) public view virtual override(ERC721, ERC721URIStorage) returns (string memory) {
     return ERC721URIStorage.tokenURI(tokenId);
@@ -164,13 +181,7 @@ contract Station is ERC721Enumerable, ERC721URIStorage {
     return ERC721Enumerable.supportsInterface(interfaceId);
   }
 
-  function changeManufacturer(address _manufacturer) public {
-    require(msg.sender == manufacturer, "Do not call this function!");
-    manufacturer = _manufacturer;
-    emit ChangeManufacturer(_manufacturer);
-  }
-
-  event ChangeManufacturer(address _manufacturer);
+  function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {}
 
   /// @dev This event MUST emit when target is distributed to token holders.
   /// @param from The address which sends target to this contract.
