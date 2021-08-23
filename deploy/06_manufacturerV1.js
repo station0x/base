@@ -5,7 +5,7 @@ module.exports = async ({
     const { deploy, get } = deployments;
     const { deployer, manufacturerOperator, saleToken, stationLabs } = await getNamedAccounts();
   
-    await deploy('Station', {
+    await deploy('ManufacturerV1', {
       from: deployer,
       args: [
         manufacturerOperator,

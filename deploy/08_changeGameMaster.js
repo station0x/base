@@ -11,5 +11,4 @@ module.exports = async ({
         "changeGameMaster",
         gameMaster
     )
-    return true
   };

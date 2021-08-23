@@ -12,5 +12,4 @@ module.exports = async ({
         "station:callisto-6",
         (await get('Station')).address
     )
-    return true
   };

@@ -1,0 +1,205 @@
+{
+  "address": "0x191CC45eB6193973a6a55878F0306f8ba178311a",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_gameMaster",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_newGameMaster",
+          "type": "address"
+        }
+      ],
+      "name": "ChangeGameMaster",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "nameAddress",
+          "type": "address"
+        }
+      ],
+      "name": "SetAddressOf",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "addressOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_newGameMaster",
+          "type": "address"
+        }
+      ],
+      "name": "changeGameMaster",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "name": "getAddressOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "nameAddress",
+          "type": "address"
+        }
+      ],
+      "name": "setAddressOf",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xb9c4ef66e3078c9ba1716de836847e96023f0e1013b793c17362c90cc0a08b84",
+  "receipt": {
+    "to": null,
+    "from": "0xC4D37babfE60b208dD695155Cc80C981E6d38E4a",
+    "contractAddress": "0x191CC45eB6193973a6a55878F0306f8ba178311a",
+    "transactionIndex": 0,
+    "gasUsed": "314208",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000002000000000000000000000000000000000000000000000000000800000000000000000040100000000000000000000000000000000000000100000000000000000000080000000000000000000040000000000000000000000000000000000000001000000000000000000200000000000000000000000000000000000000000000000000040000000004000000000000000000001000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000100000",
+    "blockHash": "0x96ccbe18d04559de533bf0fd8df0c2a70524ce7048733e754140cb9f8bf00b71",
+    "transactionHash": "0xb9c4ef66e3078c9ba1716de836847e96023f0e1013b793c17362c90cc0a08b84",
+    "logs": [
+      {
+        "transactionIndex": 0,
+        "blockNumber": 18011125,
+        "transactionHash": "0xb9c4ef66e3078c9ba1716de836847e96023f0e1013b793c17362c90cc0a08b84",
+        "address": "0x0000000000000000000000000000000000001010",
+        "topics": [
+          "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63",
+          "0x0000000000000000000000000000000000000000000000000000000000001010",
+          "0x000000000000000000000000c4d37babfe60b208dd695155cc80c981e6d38e4a",
+          "0x000000000000000000000000c275dc8be39f50d12f66b6a63629c39da5bae5bd"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000217d1d86c480000000000000000000000000000000000000000000000000000c686b3257e1dc00000000000000000000000000000000000000000000000141956e40e2972bd3d70000000000000000000000000000000000000000000000000c46ee14d11d5c00000000000000000000000000000000000000000000000141958fbe001df053d7",
+        "logIndex": 0,
+        "blockHash": "0x96ccbe18d04559de533bf0fd8df0c2a70524ce7048733e754140cb9f8bf00b71"
+      }
+    ],
+    "blockNumber": 18011125,
+    "cumulativeGasUsed": "314208",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xC4D37babfE60b208dD695155Cc80C981E6d38E4a"
+  ],
+  "solcInputHash": "fd57888d3eb992cdd5627b6e61818791",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_gameMaster\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_newGameMaster\",\"type\":\"address\"}],\"name\":\"ChangeGameMaster\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"nameAddress\",\"type\":\"address\"}],\"name\":\"SetAddressOf\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"addressOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_newGameMaster\",\"type\":\"address\"}],\"name\":\"changeGameMaster\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"name\":\"getAddressOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"nameAddress\",\"type\":\"address\"}],\"name\":\"setAddressOf\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/Registry.sol\":\"Registry\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/Registry.sol\":{\"content\":\"//SPDX-License-Identifier: Unlicense\\npragma solidity ^0.8.0;\\n\\ncontract Registry {\\n    address gameMaster;\\n    mapping (string => address) public addressOf;\\n\\n    constructor(address _gameMaster) {\\n        gameMaster = _gameMaster;\\n    }\\n\\n    function getAddressOf(string calldata name) public view returns(address) {\\n        return addressOf[name];\\n    }\\n\\n    function setAddressOf(string calldata name, address nameAddress) public {\\n        require(msg.sender == gameMaster);\\n        addressOf[name] = nameAddress;\\n        emit SetAddressOf(name, nameAddress);\\n\\n    }\\n\\n    function changeGameMaster(address _newGameMaster) public {\\n        require(msg.sender == gameMaster);\\n        gameMaster = _newGameMaster;\\n        emit ChangeGameMaster(_newGameMaster);\\n    }\\n\\n    event SetAddressOf(string indexed name, address nameAddress);\\n    event ChangeGameMaster(address _newGameMaster);\\n}\",\"keccak256\":\"0x9e5ba3b73f9053530c82707468c2cc5100649f9c938cc9560b7a10bb67ebc556\",\"license\":\"Unlicense\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506040516104d83803806104d883398101604081905261002f91610054565b600080546001600160a01b0319166001600160a01b0392909216919091179055610082565b600060208284031215610065578081fd5b81516001600160a01b038116811461007b578182fd5b9392505050565b610447806100916000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c8063990e80a314610051578063c4a9029014610066578063ccf1454a14610079578063e09c0c47146100c9575b600080fd5b61006461005f3660046102ef565b6100dc565b005b61006461007436600461028e565b61018b565b6100ad610087366004610341565b80516020818301810180516001825292820191909301209152546001600160a01b031681565b6040516001600160a01b03909116815260200160405180910390f35b6100ad6100d73660046102af565b6101f6565b6000546001600160a01b031633146100f357600080fd5b80600184846040516101069291906103eb565b90815260405190819003602001812080546001600160a01b03939093166001600160a01b03199093169290921790915561014390849084906103eb565b6040519081900381206001600160a01b0383168252907f82869e11a8ab46260576c215f8a3b32ac1ea7634b567cf9599f58af9de34a5269060200160405180910390a2505050565b6000546001600160a01b031633146101a257600080fd5b600080546001600160a01b0319166001600160a01b0383169081179091556040519081527f8e07e8b812c433db1d8932844435af4049e93091110891efbc7cc1cdf23de0349060200160405180910390a150565b60006001838360405161020a9291906103eb565b908152604051908190036020019020546001600160a01b0316905092915050565b80356001600160a01b038116811461024257600080fd5b919050565b60008083601f840112610258578081fd5b50813567ffffffffffffffff81111561026f578182fd5b60208301915083602082850101111561028757600080fd5b9250929050565b60006020828403121561029f578081fd5b6102a88261022b565b9392505050565b600080602083850312156102c1578081fd5b823567ffffffffffffffff8111156102d7578182fd5b6102e385828601610247565b90969095509350505050565b600080600060408486031215610303578081fd5b833567ffffffffffffffff811115610319578182fd5b61032586828701610247565b909450925061033890506020850161022b565b90509250925092565b600060208284031215610352578081fd5b813567ffffffffffffffff80821115610369578283fd5b818401915084601f83011261037c578283fd5b81358181111561038e5761038e6103fb565b604051601f8201601f19908116603f011681019083821181831017156103b6576103b66103fb565b816040528281528760208487010111156103ce578586fd5b826020860160208301379182016020019490945295945050505050565b8183823760009101908152919050565b634e487b7160e01b600052604160045260246000fdfea2646970667358221220dcce4931bc167ecd600837db84af5965c439255be73121b9d4e10747a3f2ffed64736f6c63430008040033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c8063990e80a314610051578063c4a9029014610066578063ccf1454a14610079578063e09c0c47146100c9575b600080fd5b61006461005f3660046102ef565b6100dc565b005b61006461007436600461028e565b61018b565b6100ad610087366004610341565b80516020818301810180516001825292820191909301209152546001600160a01b031681565b6040516001600160a01b03909116815260200160405180910390f35b6100ad6100d73660046102af565b6101f6565b6000546001600160a01b031633146100f357600080fd5b80600184846040516101069291906103eb565b90815260405190819003602001812080546001600160a01b03939093166001600160a01b03199093169290921790915561014390849084906103eb565b6040519081900381206001600160a01b0383168252907f82869e11a8ab46260576c215f8a3b32ac1ea7634b567cf9599f58af9de34a5269060200160405180910390a2505050565b6000546001600160a01b031633146101a257600080fd5b600080546001600160a01b0319166001600160a01b0383169081179091556040519081527f8e07e8b812c433db1d8932844435af4049e93091110891efbc7cc1cdf23de0349060200160405180910390a150565b60006001838360405161020a9291906103eb565b908152604051908190036020019020546001600160a01b0316905092915050565b80356001600160a01b038116811461024257600080fd5b919050565b60008083601f840112610258578081fd5b50813567ffffffffffffffff81111561026f578182fd5b60208301915083602082850101111561028757600080fd5b9250929050565b60006020828403121561029f578081fd5b6102a88261022b565b9392505050565b600080602083850312156102c1578081fd5b823567ffffffffffffffff8111156102d7578182fd5b6102e385828601610247565b90969095509350505050565b600080600060408486031215610303578081fd5b833567ffffffffffffffff811115610319578182fd5b61032586828701610247565b909450925061033890506020850161022b565b90509250925092565b600060208284031215610352578081fd5b813567ffffffffffffffff80821115610369578283fd5b818401915084601f83011261037c578283fd5b81358181111561038e5761038e6103fb565b604051601f8201601f19908116603f011681019083821181831017156103b6576103b66103fb565b816040528281528760208487010111156103ce578586fd5b826020860160208301379182016020019490945295945050505050565b8183823760009101908152919050565b634e487b7160e01b600052604160045260246000fdfea2646970667358221220dcce4931bc167ecd600837db84af5965c439255be73121b9d4e10747a3f2ffed64736f6c63430008040033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 3,
+        "contract": "contracts/Registry.sol:Registry",
+        "label": "gameMaster",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 7,
+        "contract": "contracts/Registry.sol:Registry",
+        "label": "addressOf",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_string_memory_ptr,t_address)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_string_memory_ptr,t_address)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

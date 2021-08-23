@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 require('hardhat-deploy');
+require('dotenv').config()
 
 module.exports = {
   solidity: {
@@ -11,21 +12,36 @@ module.exports = {
       }
     }
   },
+  networks:{
+    hardhat: {},
+    mumbai:{
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+      accounts: [process.env.MUMBAI_PRIVKEY]
+    },
+    polygon:{
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+      accounts: [process.env.POLYGON_PRIVKEY]
+    },
+  },
   namedAccounts: {
-    deployer:{
+    deployer: {
       default:0
     },
     gameMaster: {
-      4: ''
+      80001: '0xC4D37babfE60b208dD695155Cc80C981E6d38E4a',
+      137: ''
     }, 
     manufacturerOperator: {
-      4: ''
+      80001: '0xC4D37babfE60b208dD695155Cc80C981E6d38E4a',
+      137: ''
     },
     saleToken: {
-      4: ''
+      80001: '0x2d7882beDcbfDDce29Ba99965dd3cdF7fcB10A1e',
+      137: ''
     },
     stationLabs: {
-      4: ''
+      80001: '0xC4D37babfE60b208dD695155Cc80C981E6d38E4a',
+      137: ''
     }
   }
 };

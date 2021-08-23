@@ -12,5 +12,4 @@ module.exports = async ({
         "stationHooks",
         (await get('StationHooks')).address
     )
-    return true
   };

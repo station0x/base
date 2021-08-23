@@ -1,0 +1,163 @@
+{
+  "address": "0x303Ab76bE9db5525aB5a5801e5B3756BC60e8477",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "onDistribute",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "onSeize",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "onTransfer",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xd2ab12350bf71c2b7bb76dfea7b1395978b535c5a772201655c9d510801b5444",
+  "receipt": {
+    "to": null,
+    "from": "0xC4D37babfE60b208dD695155Cc80C981E6d38E4a",
+    "contractAddress": "0x303Ab76bE9db5525aB5a5801e5B3756BC60e8477",
+    "transactionIndex": 0,
+    "gasUsed": "130291",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000002000000000000000000000000000000000000000000000000000800000000000000000040100000000000000000000000000000000000000100000000000000000000080000000000000000000040000000000000000000000000000000000000001000000000000000000200000000000000000000000000000000000000000000000000040000000004000000000000000000001000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000100000",
+    "blockHash": "0x21217ac841e8350a0ddb3f99e54f0db62d7d54fa6fac2c5e46709dd43a9de9c5",
+    "transactionHash": "0xd2ab12350bf71c2b7bb76dfea7b1395978b535c5a772201655c9d510801b5444",
+    "logs": [
+      {
+        "transactionIndex": 0,
+        "blockNumber": 18011129,
+        "transactionHash": "0xd2ab12350bf71c2b7bb76dfea7b1395978b535c5a772201655c9d510801b5444",
+        "address": "0x0000000000000000000000000000000000001010",
+        "topics": [
+          "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63",
+          "0x0000000000000000000000000000000000000000000000000000000000001010",
+          "0x000000000000000000000000c4d37babfe60b208dd695155cc80c981e6d38e4a",
+          "0x000000000000000000000000c275dc8be39f50d12f66b6a63629c39da5bae5bd"
+        ],
+        "data": "0x000000000000000000000000000000000000000000000000000de2f81f2c44000000000000000000000000000000000000000000000000000c46ee14d11d5c0000000000000000000000000000000000000000000000014195c7f896ac13edd70000000000000000000000000000000000000000000000000c390b1cb1f1180000000000000000000000000000000000000000000000014195d5db8ecb4031d7",
+        "logIndex": 0,
+        "blockHash": "0x21217ac841e8350a0ddb3f99e54f0db62d7d54fa6fac2c5e46709dd43a9de9c5"
+      }
+    ],
+    "blockNumber": 18011129,
+    "cumulativeGasUsed": "130291",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "solcInputHash": "4dde0824a6a40d0e45976a5fd176e3d7",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"onDistribute\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"onSeize\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"onTransfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/StationHooks.sol\":\"StationHooks\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/StationHooks.sol\":{\"content\":\"//SPDX-License-Identifier: Unlicense\\npragma solidity ^0.8.0;\\n\\ncontract StationHooks {\\n\\n    bool shh;\\n\\n    modifier silent {\\n        if(false) shh = shh;\\n        _;\\n    }\\n\\n    function onTransfer(address, address, address, uint256) external silent returns (bool) { return true; }\\n    function onSeize(address, address, address, uint256) external silent returns (bool) { return false; }\\n    function onDistribute(address, uint) external silent returns (bool) { return false; }\\n}\",\"keccak256\":\"0x789f8b81e81fc279eccda961cfc3b35c0dbb12bb6748036b23adaeb582d55365\",\"license\":\"Unlicense\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610165806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c80630987df03146100465780631396c62814610072578063d14b763a1461008a575b600080fd5b61005e6100543660046100bc565b6001949350505050565b604051901515815260200160405180910390f35b61005e6100803660046100bc565b6000949350505050565b61005e610098366004610106565b600092915050565b80356001600160a01b03811681146100b757600080fd5b919050565b600080600080608085870312156100d1578384fd5b6100da856100a0565b93506100e8602086016100a0565b92506100f6604086016100a0565b9396929550929360600135925050565b60008060408385031215610118578182fd5b610121836100a0565b94602093909301359350505056fea2646970667358221220aff36f4346336c50c70a723b69ff7be8f30c8e59f48fa75ce49dbc1f27041c4a64736f6c63430008040033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100415760003560e01c80630987df03146100465780631396c62814610072578063d14b763a1461008a575b600080fd5b61005e6100543660046100bc565b6001949350505050565b604051901515815260200160405180910390f35b61005e6100803660046100bc565b6000949350505050565b61005e610098366004610106565b600092915050565b80356001600160a01b03811681146100b757600080fd5b919050565b600080600080608085870312156100d1578384fd5b6100da856100a0565b93506100e8602086016100a0565b92506100f6604086016100a0565b9396929550929360600135925050565b60008060408385031215610118578182fd5b610121836100a0565b94602093909301359350505056fea2646970667358221220aff36f4346336c50c70a723b69ff7be8f30c8e59f48fa75ce49dbc1f27041c4a64736f6c63430008040033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 3,
+        "contract": "contracts/StationHooks.sol:StationHooks",
+        "label": "shh",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_bool"
+      }
+    ],
+    "types": {
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      }
+    }
+  }
+}

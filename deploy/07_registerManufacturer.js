@@ -12,5 +12,4 @@ module.exports = async ({
         "manufacturerV1",
         (await get('ManufacturerV1')).address
     )
-    return true
   };
