@@ -13,3 +13,5 @@ module.exports = async ({
         (await get('ManufacturerV1')).address
     )
   };
+
+  module.exports.tags = ['Core']

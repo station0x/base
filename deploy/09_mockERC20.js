@@ -5,10 +5,10 @@ module.exports = async ({
     const { deploy } = deployments;
     const { deployer } = await getNamedAccounts();
   
-    await deploy('StationHooks', {
+    await deploy('MockToken', {
       from: deployer,
       args: [],
     });
   };
 
-  module.exports.tags = ['Core']
+  module.exports.tags = ['MockToken']

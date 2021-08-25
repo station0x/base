@@ -10,3 +10,5 @@ module.exports = async ({
       args: ['Callisto-6', 'CAL6', (await get('Registry')).address],
     });
   };
+
+  module.exports.tags = ['Core']

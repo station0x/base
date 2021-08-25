@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: GPL-2.0
 pragma solidity ^0.8.0;
 
 interface IERC20 {
@@ -20,6 +20,7 @@ contract ManufacturerV1 {
     uint256 public constant SALE_LIMIT = 9000;
     uint256 public constant TEAM_LIMIT = 1000;
     uint256 public constant PRICE = 0.08 ether;
+    bytes16 internal constant ALPHABET = '0123456789abcdef';
 
     address public operator;
     IERC20 public saleToken;
@@ -54,7 +55,7 @@ contract ManufacturerV1 {
         require(balanceAfter - balanceBefore == amountDue);
 
         for(uint i=0; i<count; i++) {
-            string memory tokenURI = string(abi.encodePacked("https://station0x.com/spaceships/", address(station), "/", station.totalSupply(), ".json"));
+            string memory tokenURI = string(abi.encodePacked("https://station0x.com/api/", addressToString(address(station)), "/", toString(station.totalSupply()), ".json"));
             station.mint(msg.sender, station.totalSupply(), tokenURI, "");
         }
 
@@ -67,7 +68,7 @@ contract ManufacturerV1 {
         require(count > 0);
 
         for(uint i=0; i<count; i++) {
-            string memory tokenURI = string(abi.encodePacked("https://station0x.com/spaceships/", address(station), "/", station.totalSupply(), ".json"));
+            string memory tokenURI = string(abi.encodePacked("https://station0x.com/api/", addressToString(address(station)), "/", toString(station.totalSupply()), ".json"));
             station.mint(to, station.totalSupply(), tokenURI, "");
         }
 
@@ -84,6 +85,42 @@ contract ManufacturerV1 {
         require(msg.sender == operator);
         operator = _newOperator;
         emit SetOperator(_newOperator);
+    }
+
+    function addressToString(address addr) internal pure returns (string memory) {
+        uint value = uint256(uint160(addr));
+        uint length = 20;
+        bytes memory buffer = new bytes(2 * length + 2);
+        buffer[0] = '0';
+        buffer[1] = 'x';
+        for (uint256 i = 2 * length + 1; i > 1; --i) {
+            buffer[i] = ALPHABET[value & 0xf];
+            value >>= 4;
+        }
+        require(value == 0, 'Strings: hex length insufficient');
+        return string(buffer);
+    }
+    
+    function toString(uint256 value) internal pure returns (string memory) {
+        // Inspired by OraclizeAPI's implementation - MIT licence
+        // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol
+
+        if (value == 0) {
+            return "0";
+        }
+        uint256 temp = value;
+        uint256 digits;
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+        bytes memory buffer = new bytes(digits);
+        while (value != 0) {
+            digits -= 1;
+            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+            value /= 10;
+        }
+        return string(buffer);
     }
 
     event SetOperator(address _newOperator);

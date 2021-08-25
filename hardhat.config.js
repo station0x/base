@@ -4,13 +4,21 @@ require('dotenv').config()
 
 module.exports = {
   solidity: {
-    version: "0.8.4",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200
-      }
-    }
+    compilers: [
+      {
+      version: "0.8.4",
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 200
+          }
+        },
+      },
+      {
+        version: "0.7.0",
+        settings: {},
+      },
+    ]
   },
   networks:{
     hardhat: {},
@@ -36,11 +44,11 @@ module.exports = {
       137: ''
     },
     saleToken: {
-      80001: '0x2d7882beDcbfDDce29Ba99965dd3cdF7fcB10A1e',
+      80001: '0xAC0d1F1353ab6f6E15F47480A24ebF7fee33F76A',
       137: ''
     },
     stationLabs: {
-      80001: '0xC4D37babfE60b208dD695155Cc80C981E6d38E4a',
+      80001: '0x0000000000000000000000000000000000000001',
       137: ''
     }
   }

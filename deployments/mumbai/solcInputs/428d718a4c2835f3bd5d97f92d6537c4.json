@@ -2,7 +2,7 @@
   "language": "Solidity",
   "sources": {
     "contracts/StationHooks.sol": {
-      "content": "//SPDX-License-Identifier: Unlicense\npragma solidity ^0.8.0;\n\ncontract StationHooks {\n\n    bool shh;\n\n    modifier silent {\n        if(false) shh = shh;\n        _;\n    }\n\n    function onTransfer(address, address, address, uint256) external silent returns (bool) { return true; }\n    function onSeize(address, address, address, uint256) external silent returns (bool) { return false; }\n    function onDistribute(address, uint) external silent returns (bool) { return false; }\n}"
+      "content": "//SPDX-License-Identifier: GPL-2.0\npragma solidity ^0.8.0;\n\ncontract StationHooks {\n\n    bool shh;\n\n    modifier silent {\n        if(false) shh = shh;\n        _;\n    }\n\n    function onTransfer(address, address, address, uint256) external silent returns (bool) { return true; }\n    function onSeize(address, address, address, uint256) external silent returns (bool) { return false; }\n    function onDistribute(address, uint) external silent returns (bool) { return false; }\n}"
     }
   },
   "settings": {

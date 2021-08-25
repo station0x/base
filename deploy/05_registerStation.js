@@ -13,3 +13,5 @@ module.exports = async ({
         (await get('Station')).address
     )
   };
+
+  module.exports.tags = ['Core']

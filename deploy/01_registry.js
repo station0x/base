@@ -10,3 +10,5 @@ module.exports = async ({
       args: [deployer],
     });
   };
+
+  module.exports.tags = ['Core']

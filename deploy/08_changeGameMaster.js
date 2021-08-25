@@ -12,3 +12,5 @@ module.exports = async ({
         gameMaster
     )
   };
+
+  module.exports.tags = ['Core']

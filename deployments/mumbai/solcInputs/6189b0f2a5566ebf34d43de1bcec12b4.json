@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Registry.sol": {
+      "content": "//SPDX-License-Identifier: GPL-2.0\npragma solidity ^0.8.0;\n\ncontract Registry {\n    address gameMaster;\n    mapping (string => address) public addressOf;\n\n    constructor(address _gameMaster) {\n        gameMaster = _gameMaster;\n    }\n\n    function getAddressOf(string calldata name) public view returns(address) {\n        return addressOf[name];\n    }\n\n    function setAddressOf(string calldata name, address nameAddress) public {\n        require(msg.sender == gameMaster);\n        addressOf[name] = nameAddress;\n        emit SetAddressOf(name, nameAddress);\n\n    }\n\n    function changeGameMaster(address _newGameMaster) public {\n        require(msg.sender == gameMaster);\n        gameMaster = _newGameMaster;\n        emit ChangeGameMaster(_newGameMaster);\n    }\n\n    event SetAddressOf(string indexed name, address nameAddress);\n    event ChangeGameMaster(address _newGameMaster);\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
