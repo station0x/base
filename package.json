@@ -4,8 +4,14 @@
     "compile": "./node_modules/.bin/hardhat compile",
     "deploy:mumbai": "./node_modules/.bin/hardhat deploy --network mumbai --tags Core --reset --verbose",
     "deploy:mainnet": "./node_modules/.bin/hardhat deploy --network mainnet --tags Core --reset --verbose",
+    "deploy:ropsten": "./node_modules/.bin/hardhat deploy --network ropsten --tags Core --reset --verbose",
+    "deploy:ftmopera": "./node_modules/.bin/hardhat deploy --network ftmOpera --tags Core --reset --verbose",
+    "deploy:ftmtestnet": "./node_modules/.bin/hardhat deploy --network ftmTestnet --tags Core --reset --verbose",
     "verify:mumbai": "env-cmd node ./scripts/verify.js mumbai",
-    "verify:mainnet": "env-cmd node ./scripts/verify.js mainnet"
+    "verify:mainnet": "env-cmd node ./scripts/verify.js mainnet",
+    "verify:ropsten": "env-cmd node ./scripts/verify.js ropsten",
+    "verify:ftmopera": "env-cmd node ./scripts/verify.js ftmOpera",
+    "verify:ftmtestnet": "env-cmd node ./scripts/verify.js ftmTestnet"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",

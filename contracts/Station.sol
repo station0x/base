@@ -1,178 +1,114 @@
-//SPDX-License-Identifier: GPL-2.0
-pragma solidity ^0.8.0;
+//SPDX-License-Identifier: MIT
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./SafeMathUint.sol";
-import "./SafeMathInt.sol";
-
-interface IRegistry {
-  function getAddressOf(string calldata) external view returns (address);
-}
-
-interface IStationHooks { 
-  function onTransfer(address msgSender, address from, address to, uint256 tokenId) external returns (bool);
-  function onSeize(address msgSender, address from, address to, uint256 tokenId) external returns (bool);
-  function onDistribute(address msgSender, uint amount) external returns (bool);
-}
-
-/// @title Dividend-Paying Token
-/// @author Roger Wu (https://github.com/roger-wu) & Captain Isaac A.
-/// @dev A mintable ERC20 token that allows anyone to pay and distribute a target token
-///  to token holders as dividends and allows token holders to withdraw their dividends.
-///  Reference: the source code of PoWH3D: https://etherscan.io/address/0xB3775fB83F7D12A36E0475aBdD1FCA35c091efBe#code
 contract Station is ERC721Enumerable, ERC721URIStorage {
-  using SafeMath for uint256;
-  using SafeMathUint for uint256;
-  using SafeMathInt for int256;
-  using SafeERC20 for IERC20;
-  
-  IRegistry public registry;
+  uint256 public constant SALE_LIMIT = 9000;
+  uint256 public constant TEAM_LIMIT = 1000;
+  uint256 public constant PRICE = 200 ether;
+  bytes16 internal constant ALPHABET = '0123456789abcdef';
 
-  // With `magnitude`, we can properly distribute dividends even if the amount of received target is small.
-  // For more discussion about choosing the value of `magnitude`,
-  //  see https://github.com/ethereum/EIPs/issues/1726#issuecomment-472352728
-  uint256 constant internal magnitude = 2**128;
+  address public owner;
+  uint256 public sold;
+  uint256 public teamMinted;
+  bool public saleIsActive = true;
+  address payable public stationLabs;
+  address public signer;
 
-  uint256 internal magnifiedDividendPerShare;
-
-  // About dividendCorrection:
-  // If the token balance of a `_user` is never changed, the dividend of `_user` can be computed with:
-  //   `dividendOf(_user) = dividendPerShare * balanceOf(_user)`.
-  // When `balanceOf(_user)` is changed (via minting/burning/transferring tokens),
-  //   `dividendOf(_user)` should not be changed,
-  //   but the computed value of `dividendPerShare * balanceOf(_user)` is changed.
-  // To keep the `dividendOf(_user)` unchanged, we add a correction term:
-  //   `dividendOf(_user) = dividendPerShare * balanceOf(_user) + dividendCorrectionOf(_user)`,
-  //   where `dividendCorrectionOf(_user)` is updated whenever `balanceOf(_user)` is changed:
-  //   `dividendCorrectionOf(_user) = dividendPerShare * (old balanceOf(_user)) - (new balanceOf(_user))`.
-  // So now `dividendOf(_user)` returns the same value before and after `balanceOf(_user)` is changed.
-  mapping(address => int256) internal magnifiedDividendCorrections;
-  mapping(address => uint256) internal withdrawnDividends;
+  mapping(address => uint256) public bought;
+  mapping(address => bool) public claimed;
 
   constructor(
     string memory _name,
     string memory _symbol,
-    IRegistry _registry
+    address payable _stationLabs,
+    address _signer
   ) ERC721(_name, _symbol) {
-    registry = _registry;
+    owner = msg.sender;
+    stationLabs = _stationLabs;
+    signer = _signer;
   }
 
-  /// @notice Distributes target to token holders as dividends.
-  /// @dev It reverts if the total supply of tokens is 0.
-  /// It emits the `DividendsDistributed` event if the amount of received target is greater than 0.
-  /// About undistributed target tokens:
-  ///   In each distribution, there is a small amount of target not distributed,
-  ///     the magnified amount of which is
-  ///     `(amount * magnitude) % totalSupply()`.
-  ///   With a well-chosen `magnitude`, the amount of undistributed target
-  ///     (de-magnified) in a distribution can be less than 1 wei.
-  ///   We can actually keep track of the undistributed target in a distribution
-  ///     and try to distribute it in the next distribution,
-  ///     but keeping track of such data on-chain costs much more than
-  ///     the saved target, so we don't do that.
-  function distributeDividends(uint amount) public {
-    require(totalSupply() > 0);
-    require(amount > 0);
-    IERC20 rewardToken = IERC20(registry.getAddressOf('rewardToken'));
-    IStationHooks hooks = IStationHooks(registry.getAddressOf('stationHooks'));
-    require(address(rewardToken) != address(0));
-    require(hooks.onDistribute(msg.sender, amount));
-    magnifiedDividendPerShare = magnifiedDividendPerShare.add(
-      (amount).mul(magnitude) / totalSupply()
-    );
-
-    rewardToken.safeTransferFrom(msg.sender, address(this), amount);
-
-    emit DividendsDistributed(msg.sender, amount);
-  }
-
-  /// @notice Withdraws the target distributed to the sender.
-  /// @dev It emits a `DividendWithdrawn` event if the amount of withdrawn target is greater than 0.
-  function withdrawDividend() public {
-    IERC20 rewardToken = IERC20(registry.getAddressOf('rewardToken'));
-    require(address(rewardToken) != address(0));
-    uint256 _withdrawableDividend = withdrawableDividendOf(msg.sender);
-    if (_withdrawableDividend > 0) {
-      withdrawnDividends[msg.sender] = withdrawnDividends[msg.sender].add(_withdrawableDividend);
-      emit DividendWithdrawn(msg.sender, _withdrawableDividend);
-      rewardToken.safeTransfer(msg.sender, _withdrawableDividend);
-    }
-  }
-
-  /// @notice View the amount of dividend in wei that an address can withdraw.
-  /// @param _owner The address of a token holder.
-  /// @return The amount of dividend in wei that `_owner` can withdraw.
-  function dividendOf(address _owner) public view returns(uint256) {
-    return withdrawableDividendOf(_owner);
-  }
-
-  /// @notice View the amount of dividend in wei that an address can withdraw.
-  /// @param _owner The address of a token holder.
-  /// @return The amount of dividend in wei that `_owner` can withdraw.
-  function withdrawableDividendOf(address _owner) internal view returns(uint256) {
-    return accumulativeDividendOf(_owner).sub(withdrawnDividends[_owner]);
-  }
-
-  /// @notice View the amount of dividend in wei that an address has withdrawn.
-  /// @param _owner The address of a token holder.
-  /// @return The amount of dividend in wei that `_owner` has withdrawn.
-  function withdrawnDividendOf(address _owner) public view returns(uint256) {
-    return withdrawnDividends[_owner];
-  }
-
-
-  /// @notice View the amount of dividend in wei that an address has earned in total.
-  /// @dev accumulativeDividendOf(_owner) = withdrawableDividendOf(_owner) + withdrawnDividendOf(_owner)
-  /// = (magnifiedDividendPerShare * balanceOf(_owner) + magnifiedDividendCorrections[_owner]) / magnitude
-  /// @param _owner The address of a token holder.
-  /// @return The amount of dividend in wei that `_owner` has earned in total.
-  function accumulativeDividendOf(address _owner) public view returns(uint256) {
-    return magnifiedDividendPerShare.mul(balanceOf(_owner)).toInt256Safe()
-      .add(magnifiedDividendCorrections[_owner]).toUint256Safe() / magnitude;
+  modifier onlyOperator {
+    require(msg.sender == owner);
+    _;
   }
 
   function _beforeTokenTransfer(
-      address from,
-      address to,
-      uint256 tokenId
+    address from,
+    address to,
+    uint256 tokenId
   ) internal virtual override(ERC721, ERC721Enumerable) {
-      IStationHooks hooks = IStationHooks(registry.getAddressOf('stationHooks'));
-      require(hooks.onTransfer(msg.sender, from, to, tokenId));
-      ERC721Enumerable._beforeTokenTransfer(from, to, tokenId);
-      if(from == address(0)) {
-        magnifiedDividendCorrections[to] = magnifiedDividendCorrections[to].sub( magnifiedDividendPerShare.toInt256Safe() );
-      } else {
-        int256 _magCorrection = magnifiedDividendPerShare.toInt256Safe();
-        magnifiedDividendCorrections[from] = magnifiedDividendCorrections[from].add(_magCorrection);
-        magnifiedDividendCorrections[to] = magnifiedDividendCorrections[to].sub(_magCorrection);          
-      }
+    ERC721Enumerable._beforeTokenTransfer(from, to, tokenId);
   }
 
-  function mint(address to, uint256 tokenId, string memory _tokenURI, bytes memory _data) public {
-    address manufacturer = registry.getAddressOf('manufacturerV1');
-    require(msg.sender == manufacturer, "Do not call this function!");
+  function buy(uint256 _count, uint256 _maxCount, uint8 _v, bytes32 _r, bytes32 _s) public payable {
+    require(_count > 0, "Spaceship count cannot be Zero!");
+    require(_count <= SALE_LIMIT - sold, "Sale out of stock!");
+    require(saleIsActive, "Sale is not active!");
+    require(bought[msg.sender] + _count <= _maxCount);
+    bytes32 _hash = keccak256(abi.encodePacked(msg.sender, _maxCount));
+    require(verifyHash(_hash, _v, _r, _s) == signer);
+    uint256 amountDue = _count * PRICE;
+    require(msg.value == amountDue, "Sent ether is not equal to the required amount for purchase completion");
+    for(uint i=0; i<_count; i++) {
+      string memory _tokenURI = string(abi.encodePacked("https://station0x.com/api/", addressToString(address(this)), "/", toString(totalSupply()), ".json"));
+      mint(msg.sender, totalSupply(), _tokenURI, "");
+    }
+    sold += _count;
+    bought[msg.sender] += _count;
+    (bool success,) = stationLabs.call{value:msg.value}('');
+    require(success, 'Failed to forward funds');
+  }
+
+  function claimEthSkins(uint256 _amount, uint8 _v, bytes32 _r, bytes32 _s) public {
+    require(!claimed[msg.sender], "You already claimed your skins");
+    bytes32 _hash = keccak256(abi.encodePacked(msg.sender, _amount));
+    require(verifyHash(_hash, _v, _r, _s) == signer);
+    for(uint i=0; i<_amount; i++) {
+      string memory _tokenURI = string(abi.encodePacked("https://station0x.com/api/", addressToString(address(this)), "/", toString(totalSupply()), ".json"));
+      mint(msg.sender, totalSupply(), _tokenURI, "");
+    }
+    sold += _amount;
+    bought[msg.sender] += _amount;
+    claimed[msg.sender] = true;
+  }
+
+  function getStuckFunds() public onlyOperator {
+    payable(msg.sender).transfer(address(this).balance);
+  }
+
+  function mintTo(address _to, uint256 _count) public onlyOperator {
+    require(_count <= TEAM_LIMIT - teamMinted);
+    require(_count > 0);
+
+    for(uint i=0; i<_count; i++) {
+      string memory _tokenURI = string(abi.encodePacked("https://station0x.com/api/", addressToString(address(this)), "/", toString(totalSupply()), ".json"));
+      mint(_to, totalSupply(), _tokenURI, "");
+    }
+    teamMinted += _count;
+  }
+
+  function setSaleStatus(bool _status) public onlyOperator {
+    saleIsActive = _status;
+  }
+
+  function mint(address to, uint256 tokenId, string memory _tokenURI, bytes memory _data) internal {
     _safeMint(to, tokenId, _data);
     _setTokenURI(tokenId, _tokenURI);
   }
 
-  function seize(address from, address to, uint256 tokenId) public {
-    IStationHooks hooks = IStationHooks(registry.getAddressOf('stationHooks'));
-    require(hooks.onSeize(msg.sender, from, to, tokenId));
-    _transfer(from, to, tokenId);
+  function changeOperator(address _newOperator) public onlyOperator {
+    owner = _newOperator;
+    emit ChangeOperator(_newOperator);
   }
 
-  function setTokenURI(uint256 tokenId, string memory _tokenURI) public {
-    address manufacturer = registry.getAddressOf('manufacturerV1');
-    require(msg.sender == manufacturer, "Do not call this function!");
+  function setTokenURI(uint256 tokenId, string memory _tokenURI) public onlyOperator {
     _setTokenURI(tokenId, _tokenURI);
   }
 
-  
   function tokenURI(uint256 tokenId) public view virtual override(ERC721, ERC721URIStorage) returns (string memory) {
     return ERC721URIStorage.tokenURI(tokenId);
   }
@@ -181,21 +117,54 @@ contract Station is ERC721Enumerable, ERC721URIStorage {
     return ERC721Enumerable.supportsInterface(interfaceId);
   }
 
-  function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {}
+  function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+    ERC721URIStorage._burn(tokenId);
+  }
 
-  /// @dev This event MUST emit when target is distributed to token holders.
-  /// @param from The address which sends target to this contract.
-  /// @param weiAmount The amount of distributed target in wei.
-  event DividendsDistributed(
-    address indexed from,
-    uint256 weiAmount
-  );
+  function addressToString(address _addr) internal pure returns (string memory) {
+    uint value = uint256(uint160(_addr));
+    uint length = 20;
+    bytes memory buffer = new bytes(2 * length + 2);
+    buffer[0] = '0';
+    buffer[1] = 'x';
+    for (uint256 i = 2 * length + 1; i > 1; --i) {
+      buffer[i] = ALPHABET[value & 0xf];
+      value >>= 4;
+    }
+    require(value == 0, 'Strings: hex length insufficient');
+    return string(buffer);
+  }
+    
+  function toString(uint256 value) internal pure returns (string memory) {
+  // Inspired by OraclizeAPI's implementation - MIT licence
+  // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol
+    if (value == 0) {
+      return "0";
+    }
+    uint256 temp = value;
+    uint256 digits;
+    while (temp != 0) {
+      digits++;
+      temp /= 10;
+    }
+    bytes memory buffer = new bytes(digits);
+    while (value != 0) {
+      digits -= 1;
+      buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+      value /= 10;
+    }
+    return string(buffer);
+  }
 
-  /// @dev This event MUST emit when an address withdraws their dividend.
-  /// @param to The address which withdraws target from this contract.
-  /// @param weiAmount The amount of withdrawn target in wei.
-  event DividendWithdrawn(
-    address indexed to,
-    uint256 weiAmount
-  );
+  function verifyHash(bytes32 _hash, uint8 _v, bytes32 _r, bytes32 _s) internal pure returns (address _signer) {
+    bytes32 messageDigest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", _hash));
+    return ecrecover(messageDigest, _v, _r, _s);
+  }
+
+  function changeStationLabs(address payable _newStationLabs) public {
+    require(msg.sender == address(stationLabs));
+    stationLabs = _newStationLabs;
+  }
+
+  event ChangeOperator(address _newOperator);
 }

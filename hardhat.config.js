@@ -6,50 +6,50 @@ module.exports = {
   solidity: {
     compilers: [
       {
-      version: "0.8.4",
+      version: "0.8.7",
       settings: {
         optimizer: {
           enabled: true,
           runs: 200
           }
         },
-      },
-      {
-        version: "0.7.0",
-        settings: {},
-      },
+      }
     ]
   },
   networks:{
     hardhat: {},
-    mumbai:{
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
-      accounts: [process.env.MUMBAI_PRIVKEY]
+    ropsten: {
+      url: 'https://eth-ropsten.alchemyapi.io/v2/_6ViI78tHoOAW45KhGO_DrgW6kep4A6f',
+      accounts: [process.env.ROPSTEN_PRIVKEY]
     },
-    polygon:{
-      url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
-      accounts: [process.env.POLYGON_PRIVKEY]
+    mainnet: {
+      url: 'https://eth-mainnet.alchemyapi.io/v2/kPuyZWcXZM4UFH0viuQjaiIq4h61pj-6',
+      accounts: [process.env.MAINNET_PRIVKEY]
     },
+    ftmOpera: {
+      url: 'https://rpc.ftm.tools', 
+      accounts: [process.env.MAINNET_PRIVKEY]
+    },
+    ftmTestnet: {
+      url: 'https://rpc.testnet.fantom.network/',
+      accounts: [process.env.MAINNET_PRIVKEY]
+    }
   },
   namedAccounts: {
     deployer: {
       default:0
     },
-    gameMaster: {
-      80001: '0xC4D37babfE60b208dD695155Cc80C981E6d38E4a',
-      137: ''
-    }, 
-    manufacturerOperator: {
-      80001: '0xC4D37babfE60b208dD695155Cc80C981E6d38E4a',
-      137: ''
-    },
-    saleToken: {
-      80001: '0xAC0d1F1353ab6f6E15F47480A24ebF7fee33F76A',
-      137: ''
-    },
     stationLabs: {
-      80001: '0x0000000000000000000000000000000000000001',
-      137: ''
+      3: '0x91f06A77F5664cfc17cfC022f03DfE24Bd0Ceb3b',
+      1: '0x91f06A77F5664cfc17cfC022f03DfE24Bd0Ceb3b',
+      4002: '0x6BDD6Bb68Ec6927F56749b46746F0AFA7CdA9F3c',
+      250: '0x6BDD6Bb68Ec6927F56749b46746F0AFA7CdA9F3c'
+    },
+    signerAddress: {
+      3: '0x9dBfB700505854c2ab7d545482cec74D4771A091',
+      1: '0x9dBfB700505854c2ab7d545482cec74D4771A091',
+      4002: '0x9dBfB700505854c2ab7d545482cec74D4771A091',
+      250: '0x9dBfB700505854c2ab7d545482cec74D4771A091'
     }
   }
 };
